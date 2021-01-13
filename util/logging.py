@@ -1,13 +1,43 @@
 import logging
 import traceback
+from typing import Callable
 
-formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: (%(name)s) %(message)s', )
+_formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: (%(name)s) %(message)s')
 
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
+_filehandler = logging.FileHandler('output.log')
+_filehandler.setFormatter(_formatter)
+_filehandler.setLevel(logging.INFO)
+
+_level = logging.INFO
 
 
-def log_func(logger: logging.Logger = None):
+def set_level(level: int):
+    global _level
+    _level = level
+
+
+def get_logger(name: str) -> logging.Logger:
+    logger = logging.getLogger(name)
+
+    if logger.hasHandlers():
+        return logger
+
+    logger.setLevel(logging.DEBUG)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(_formatter)
+    stream_handler.setLevel(_level)
+    logger.addHandler(stream_handler)
+
+    logger.addHandler(_filehandler)
+
+    return logger
+
+
+def log_func(logger: logging.Logger = None) -> Callable:
+    """
+    Logs function calls, return values, and exceptions, of decorated function.
+    """
     if logger is None:
         logger = logging.getLogger(__name__)
 
