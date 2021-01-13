@@ -3,7 +3,7 @@ import getopt
 import logging
 import sys
 
-from util.logging import stream_handler
+from util.logging import get_logger, set_level
 
 
 class AstroPi:
@@ -27,18 +27,13 @@ class AstroPi:
             print(self.HELP)
             sys.exit(2)
 
-        self._logger = logging.getLogger(__name__)
-        self._logger.addHandler(stream_handler)
-
-        self._logger.setLevel(logging.DEBUG)
-        stream_handler.setLevel(logging.INFO)
-
         for option, arg in options:
             if option in ('-v', '--verbose'):
-                self._logger.setLevel(logging.DEBUG)
-                stream_handler.setLevel(logging.DEBUG)
+                set_level(logging.DEBUG)
             elif option in ('-h', '--help'):
                 print(self.HELP)
+
+        self._logger = get_logger(__name__)
 
     def main(self):
         while True:

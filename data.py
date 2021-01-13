@@ -4,12 +4,14 @@ from sqlite3 import Error
 import logging
 from traceback import format_exc
 from datetime import datetime
+from util.logging import log_func, get_logger
 
-logger = logging.getLogger('astro')
+logger = get_logger(__name__)
+
 
 class Data:
+    @log_func(logger)
     def __init__(self, db_path):
-        logger.info('Class DataManager init')
 
         self.db_name = db_path
 
@@ -18,10 +20,8 @@ class Data:
         except Error as e:
             logger.critical('Cannot connect to db: {}'.format(format_exc()))
 
-        logger.debug('Class __init__ end')
-    
+    @log_func(logger)
     def create_table(self):
-        logger.debug('Function create_table start')
 
         table = """CREATE TABLE IF NOT EXISTS data (
             id integer PRIMARY KEY,
@@ -40,20 +40,19 @@ class Data:
             logger.info('Created a table')
 
             return True
-        except Exception as e:
-            table_exists = "SELECT name FROM sqlite_master WHERE type='table' AND name='spwords'"
-            if self.conn.execute(table_exists).fetchone() and isinstance(e, sqlite3.OperationalError):
-                # sqlite3 docs say ProgrammingError is raised when table exists, although OperationalError was raised when testing.
-                logger.warning('Table already exists: {}'.format(format_exc()))
-                return True
+        except Error as e:
 
-            logger.critical('Could not create a table: {}'.format(format_exc()))
-            return False
+            if isinstance(e, sqlite3.DatabaseError):
+                # sqlite3 docs say ProgrammingError is raised when table exists, although OperationalError was raised
+                # when testing.
+                logger.critical('Error creating table:\n{}'.format(format_exc()))
+                return False
 
-        logger.debug('Function create_table end')
+            logger.warning('Exception raised while creating table:\n{}'.format(format_exc()))
+            return True
 
+    @log_func(logger)
     def insert(self, img_name):
-        logger.debug('Function insert_data start')
 
         sql = ''' INSERT INTO sensor_data(time,img_name)
                 VALUES(?,?) '''
@@ -72,10 +71,9 @@ class Data:
         except Error as e:
             logger.critical('Could not insert data: {}'.format(format_exc()))
             return None
-        logger.debug('Function insert_table end')
 
+    @log_func(logger)
     def close(self):
-        logger.debug('Function close start')
 
         try:
             self.conn.commit()
@@ -87,5 +85,3 @@ class Data:
         except Error as e:
             logger.error('Could not close itself: {}'.format(e))
             return False
-
-        logger.debug('Function close end')
