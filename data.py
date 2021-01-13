@@ -18,7 +18,7 @@ class Data:
         try:
             self.conn = sqlite3.connect(os.path.abspath(self.db_name))
         except Error as e:
-            logger.critical('Cannot connect to db: {}'.format(format_exc()))
+            logger.critical(f'Cannot connect to db: {format_exc()}')
 
     @log_func(logger)
     def create_table(self):
@@ -45,10 +45,10 @@ class Data:
             if isinstance(e, sqlite3.DatabaseError):
                 # sqlite3 docs say ProgrammingError is raised when table exists, although OperationalError was raised
                 # when testing.
-                logger.critical('Error creating table:\n{}'.format(format_exc()))
+                logger.critical(f'Error creating table:\n{format_exc()}')
                 return False
 
-            logger.warning('Exception raised while creating table:\n{}'.format(format_exc()))
+            logger.warning(f'Exception raised while creating table:\n{format_exc()}')
             return True
 
     @log_func(logger)
@@ -65,11 +65,11 @@ class Data:
 
             self.conn.commit()
 
-            logger.info('Inserted a row of data: id {}'.format(cur.lastrowid))
+            logger.info(f'Inserted a row of data: id {cur.lastrowid}')
 
             return cur.lastrowid
         except Error as e:
-            logger.critical('Could not insert data: {}'.format(format_exc()))
+            logger.critical(f'Could not insert data: {format_exc()}')
             return None
 
     @log_func(logger)
@@ -83,5 +83,5 @@ class Data:
             logger.info("DB conn closed")
             return True
         except Error as e:
-            logger.error('Could not close itself: {}'.format(e))
+            logger.error(f'Could not close itself: {e}')
             return False
