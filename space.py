@@ -1,12 +1,13 @@
-import logging
+from util.logging import log_func, get_logger
 import os
 from time import sleep
 
-logger = logging.getLogger('astro')
+logger = get_logger(__name__)
 
 class Space:
     total_image_data_size = 0
 
+    @log_func(logger)
     def add_size(self, id):
         try:
             img_size = os.path.getsize("{}{}.jpg".format(self.img_path, id))
@@ -27,9 +28,8 @@ class Space:
             self.total_image_data_size += img_size
             logger.debug("total imge data: {}".format(self.total_image_data_size))
 
+    @log_func(logger)
     def is_space_left(self,):
-        logger.debug('Function storage_available start')
-        
         # 2.9 GB
         max_size = 2.9*10**9
         
@@ -39,5 +39,3 @@ class Space:
         else:
             logger.info("Storage available")
             return True
-
-        logger.debug('Function storage_available end')
