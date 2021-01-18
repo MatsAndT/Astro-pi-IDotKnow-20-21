@@ -4,7 +4,7 @@ from sqlite3 import Error
 import logging
 from traceback import format_exc
 from datetime import datetime
-from util.logging import log_func, get_logger
+from util.log import log_func, get_logger
 
 logger = get_logger(__name__)
 

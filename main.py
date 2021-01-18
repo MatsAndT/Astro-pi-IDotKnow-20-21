@@ -3,7 +3,7 @@ import getopt
 import logging
 import sys
 
-from util.logging import get_logger, set_level
+from util.log import get_logger, set_level
 
 
 class AstroPi:
