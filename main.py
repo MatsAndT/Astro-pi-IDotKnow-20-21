@@ -4,6 +4,7 @@ import logging
 import sys
 
 from util.log import get_logger, set_level
+from util.camera import AstroCamera
 
 
 class AstroPi:
@@ -36,8 +37,17 @@ class AstroPi:
         self._logger = get_logger(__name__)
 
     def main(self):
+        camera = AstroCamera.with_settings_preset()
+
+        try:
+            os.mkdir(os.path.join('output', 'images'))
+        except FileExistsError:
+            pass
+
         while True:
-            pass  # Main loop here
+            img = camera.capture_astroimage()
+            img.save(os.path.join('output', 'images', f'{img.id}.jpg'))
+            self._logger.debug(f'Image <id: {img.id}> captured.')
 
 
 if __name__ == '__main__':
