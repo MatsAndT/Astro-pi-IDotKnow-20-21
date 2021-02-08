@@ -5,6 +5,7 @@ import sys
 
 from util.log import get_logger, set_level
 from util.camera import AstroCamera
+from util.space import is_space_left
 
 
 class AstroPi:
@@ -15,6 +16,10 @@ class AstroPi:
         -h  --help          Prints usage and help
         -v  --verbose       Print debug info
     '''
+
+    output_path = 'output/'
+
+    camera = AstroCamera.with_settings_preset()
 
     def __init__(self):
         try:
@@ -35,16 +40,19 @@ class AstroPi:
                 print(self.HELP)
 
         self._logger = get_logger(__name__)
+        self._logger.debug('Program started')
 
     def main(self):
-        camera = AstroCamera.with_settings_preset()
 
         try:
-            os.mkdir(os.path.join('output', 'images'))
+            os.mkdir(os.path.join(this.output_path, 'images'))
         except FileExistsError:
             pass
 
         while True:
+            if not is_space_left(this.output_path):
+                self._logger.info(f'Storage space limit reached! Exiting...')
+                break
             img = camera.capture_astroimage()
             img.save(os.path.join('output', 'images', f'{img.id}.jpg'))
             self._logger.debug(f'Image <id: {img.id}> captured.')

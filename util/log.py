@@ -4,7 +4,7 @@ from typing import Callable
 
 _formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: (%(name)s) %(message)s')
 
-_filehandler = logging.FileHandler('output.log')
+_filehandler = logging.FileHandler('output/output.log')
 _filehandler.setFormatter(_formatter)
 _filehandler.setLevel(logging.INFO)
 
