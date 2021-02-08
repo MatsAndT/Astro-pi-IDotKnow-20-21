@@ -13,20 +13,21 @@ def get_size(path: str):
     if not os.path.isdir(path):
         return None
 
-    files = [os.path.join(path, file) for file in os.listdir(path)]
     filesizes = dict()
 
-    for file in files:
-        if not os.path.isfile(file):
-            continue
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            file = os.path.join(root, file)
+            if not os.path.isfile(file):
+                continue
 
-        if not file.endswith('.jpg'):
-            continue
+            if not file.endswith('.jpg'):
+                continue
 
-        if file in _imgsize_cache.keys():
-            continue
+            if file in _imgsize_cache.keys():
+                continue
 
-        filesizes[file] = os.path.getsize(file)
+            filesizes[file] = os.path.getsize(file)
 
     _imgsize_cache.update(filesizes)
 
@@ -36,7 +37,7 @@ def get_size(path: str):
 @log_func(logger)
 def is_space_left(path: str):
     usage = get_size(path)
-    if  usage >= _max_size:
+    if usage >= _max_size:
         logger.info("Storage not available")
         return False
     else:
