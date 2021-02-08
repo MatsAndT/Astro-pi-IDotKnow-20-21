@@ -2,6 +2,7 @@
 import getopt
 import logging
 import sys
+import os
 
 from util.log import get_logger, set_level
 from util.camera import AstroCamera
