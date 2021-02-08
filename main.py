@@ -4,9 +4,12 @@ import logging
 import sys
 import os
 
+from time import time
 from util.log import get_logger, set_level
 from util.camera import AstroCamera
 from util.space import is_space_left
+
+t0 = time()  # Start time
 
 
 class AstroPi:
@@ -50,9 +53,13 @@ class AstroPi:
         self._logger.debug('Program started')
 
     def main(self):
+
         while True:
             if not is_space_left(self.output_path):
-                self._logger.info(f'Storage space limit reached! Exiting...')
+                self._logger.info('Storage space limit reached! Exiting...')
+                break
+            if time() >= (3*60*60) - 30: # 3 hours in seconds - 30s
+                self._logger.info('Time limit reached')
                 break
             img = self.camera.capture_astroimage()
             img.save(os.path.join('output', 'images', f'{img.id}.jpg'))
