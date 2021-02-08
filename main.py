@@ -46,7 +46,7 @@ class AstroPi:
             elif option in ('-h', '--help'):
                 print(self.HELP)
 
-        self._logger = get_logger(__name__)
+        self._logger = get_logger('astro')
         self._logger.debug('Program started')
 
     def main(self):
@@ -54,7 +54,7 @@ class AstroPi:
             if not is_space_left(self.output_path):
                 self._logger.info(f'Storage space limit reached! Exiting...')
                 break
-            img = camera.capture_astroimage()
+            img = self.camera.capture_astroimage()
             img.save(os.path.join('output', 'images', f'{img.id}.jpg'))
             self._logger.debug(f'Image <id: {img.id}> captured.')
 
