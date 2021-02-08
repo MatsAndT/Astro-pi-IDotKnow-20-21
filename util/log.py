@@ -4,6 +4,11 @@ from typing import Callable
 
 _formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: (%(name)s) %(message)s')
 
+try:
+    os.mkdir(os.path.join('output'))
+except FileExistsError:
+    pass
+
 _filehandler = logging.FileHandler('output/output.log')
 _filehandler.setFormatter(_formatter)
 _filehandler.setLevel(logging.INFO)

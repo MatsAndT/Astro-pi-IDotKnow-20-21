@@ -22,6 +22,12 @@ class AstroPi:
     camera = AstroCamera.with_settings_preset()
 
     def __init__(self):
+
+        try:
+            os.mkdir(os.path.join(this.output_path, 'images'))
+        except FileExistsError:
+            pass
+
         try:
             options, args = getopt.getopt(
                 sys.argv[1:],
@@ -43,12 +49,6 @@ class AstroPi:
         self._logger.debug('Program started')
 
     def main(self):
-
-        try:
-            os.mkdir(os.path.join(this.output_path, 'images'))
-        except FileExistsError:
-            pass
-
         while True:
             if not is_space_left(this.output_path):
                 self._logger.info(f'Storage space limit reached! Exiting...')
