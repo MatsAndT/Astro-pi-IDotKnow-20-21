@@ -24,8 +24,6 @@ _stream_handler.setFormatter(_formatter)
 _stream_handler.setLevel(_level)
 
 
-
-
 def set_level(level: int):
     """Global logging level setter"""
     global _level
