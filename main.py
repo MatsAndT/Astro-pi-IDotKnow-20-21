@@ -2,9 +2,14 @@
 import getopt
 import logging
 import sys
+import os
 
+from time import time
 from util.log import get_logger, set_level
 from util.camera import AstroCamera
+from util.space import is_space_left
+
+t0 = time()  # Start time
 
 
 class AstroPi:
@@ -16,7 +21,18 @@ class AstroPi:
         -v  --verbose       Print debug info
     '''
 
+    output_path = 'output/'
+
+    camera = AstroCamera.with_settings_preset()
+
     def __init__(self):
+
+        try:
+            os.mkdir(os.path.join(self.output_path, 'images'))
+        except FileExistsError:
+            pass
+
+        # check for -v flag for verbose mode when testing.
         try:
             options, args = getopt.getopt(
                 sys.argv[1:],
@@ -34,18 +50,22 @@ class AstroPi:
             elif option in ('-h', '--help'):
                 print(self.HELP)
 
-        self._logger = get_logger(__name__)
+        self._logger = get_logger('astro')
+        self._logger.debug('Program started')
 
     def main(self):
-        camera = AstroCamera.with_settings_preset()
-
-        try:
-            os.mkdir(os.path.join('output', 'images'))
-        except FileExistsError:
-            pass
+        """Main func"""
 
         while True:
-            img = camera.capture_astroimage()
+            # Check for exit conditions.
+            if not is_space_left(self.output_path):
+                self._logger.info('Storage space limit reached! Exiting...')
+                break
+            if time() >= (3 * 60 * 60) - 30:  # 3 hours in seconds - 30s
+                self._logger.info('Time limit reached')
+                break
+
+            img = self.camera.capture_astroimage()
             img.save(os.path.join('output', 'images', f'{img.id}.jpg'))
             self._logger.debug(f'Image <id: {img.id}> captured.')
 
