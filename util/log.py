@@ -3,8 +3,10 @@ import traceback
 from typing import Callable
 import os
 
+# Logging formatter
 _formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: (%(name)s) %(message)s')
 
+# Make sure output directory exists.
 try:
     os.mkdir(os.path.join('output'))
 except FileExistsError:
@@ -12,6 +14,7 @@ except FileExistsError:
 
 _level = logging.INFO
 
+# Logging handlers
 _filehandler = logging.FileHandler('output/output.log')
 _filehandler.setFormatter(_formatter)
 _filehandler.setLevel(logging.INFO)
@@ -24,11 +27,13 @@ _stream_handler.setLevel(_level)
 
 
 def set_level(level: int):
+    """Global logging level setter"""
     global _level
     _level = level
 
 
 def get_logger(name: str) -> logging.Logger:
+    """Get logger and add default handlers if necessary"""
     logger = logging.getLogger(name)
 
     _stream_handler.setLevel(_level)
@@ -47,6 +52,7 @@ def get_logger(name: str) -> logging.Logger:
 def log_func(logger: logging.Logger = None) -> Callable:
     """
     Logs function calls, return values, and exceptions, of decorated function.
+    For testing and debugging purposes.
     """
     if logger is None:
         logger = get_logger('astro')

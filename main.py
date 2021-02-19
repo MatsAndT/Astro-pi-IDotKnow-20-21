@@ -32,6 +32,7 @@ class AstroPi:
         except FileExistsError:
             pass
 
+        # check for -v flag for verbose mode when testing.
         try:
             options, args = getopt.getopt(
                 sys.argv[1:],
@@ -53,14 +54,17 @@ class AstroPi:
         self._logger.debug('Program started')
 
     def main(self):
+        """Main func"""
 
         while True:
+            # Check for exit conditions.
             if not is_space_left(self.output_path):
                 self._logger.info('Storage space limit reached! Exiting...')
                 break
             if time() >= (3*60*60) - 30: # 3 hours in seconds - 30s
                 self._logger.info('Time limit reached')
                 break
+
             img = self.camera.capture_astroimage()
             img.save(os.path.join('output', 'images', f'{img.id}.jpg'))
             self._logger.debug(f'Image <id: {img.id}> captured.')

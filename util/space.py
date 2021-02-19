@@ -6,10 +6,11 @@ from util.log import log_func, get_logger
 logger = get_logger('astro')
 
 _imgsize_cache = dict()
-_max_size = 2.9 * 10 ** 9  # 2.9GB
+_max_size = 2.9 * 10 ** 9  # 2.9GiB
 
 
 def get_size(path: str):
+    """Gets total size of files in path"""
     if not os.path.isdir(path):
         return None
 
@@ -21,9 +22,11 @@ def get_size(path: str):
             if not os.path.isfile(file):
                 continue
 
+            # Only check images
             if not file.endswith('.jpg'):
                 continue
 
+            # Only check file size if we haven't checked it already.
             if file in _imgsize_cache.keys():
                 continue
 
@@ -36,6 +39,7 @@ def get_size(path: str):
 
 @log_func(logger)
 def is_space_left(path: str):
+    """Check if there is enough space for the experiment to continue."""
     usage = get_size(path)
     if usage >= _max_size:
         logger.info("Storage not available")
