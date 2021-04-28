@@ -61,7 +61,7 @@ class AstroPi:
             if not is_space_left(self.output_path):
                 self._logger.info('Storage space limit reached! Exiting...')
                 break
-            if time() >= (3 * 60 * 60) - 30:  # 3 hours in seconds - 30s
+            if time() >= t0 + (3 * 60 * 60) - 30:  # 3 hours in seconds - 30s
                 self._logger.info('Time limit reached')
                 break
 
